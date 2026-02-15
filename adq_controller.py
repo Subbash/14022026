@@ -2,8 +2,123 @@ import ctypes as ct
 import numpy as np
 import pyadq
 import time
-from typing import Dict, Tuple, Optional
+from typing import Dict, Tuple, Optional, Iterable, List
 import gc
+
+from adq_bias import compute_bias_codes, bias_conversion_demo
+
+
+BIAS_SETTLE_SECONDS = 0.5
+
+
+def _get_range_getter(dev):
+    for name in ("GetInputRange", "ADQ_GetInputRange"):
+        if hasattr(dev, name):
+            return getattr(dev, name)
+    return None
+
+
+def _get_range_setter(dev):
+    for name in ("SetInputRange", "ADQ_SetInputRange"):
+        if hasattr(dev, name):
+            return getattr(dev, name)
+    return None
+
+
+def adq_get_input_range_mVpp(handle: Dict, channel: int) -> float:
+    """Read the calibrated/actual input range for a channel in mVpp."""
+    dev = handle["dev"]
+    getter = _get_range_getter(dev)
+    if getter is None:
+        raise RuntimeError("Input range getter is not available in this pyadq/ADQAPI build")
+
+    value = getter(channel)
+    if isinstance(value, tuple):
+        actual_range = value[0]
+    else:
+        actual_range = value
+
+    return float(actual_range)
+
+
+def adq_set_input_range_mVpp(handle: Dict, channel: int, requested_range_mVpp: float) -> float:
+    """Set range and return actual/calibrated range mVpp reported by ADQAPI."""
+    dev = handle["dev"]
+    setter = _get_range_setter(dev)
+    if setter is None:
+        raise RuntimeError("Input range setter is not available in this pyadq/ADQAPI build")
+
+    value = setter(channel, float(requested_range_mVpp))
+    if isinstance(value, tuple):
+        actual_range = value[0]
+    else:
+        actual_range = value
+
+    actual_range = float(actual_range)
+    handle.setdefault("actual_input_ranges_mVpp", {})[channel] = actual_range
+    print(
+        f"Input range set: channel={channel}, requested_mVpp={requested_range_mVpp}, "
+        f"actual_mVpp={actual_range}"
+    )
+    return actual_range
+
+
+def _has_adjustable_bias(dev) -> bool:
+    for name in ("HasAdjustableBias", "ADQ_HasAdjustableBias"):
+        if hasattr(dev, name):
+            return bool(getattr(dev, name)())
+    raise RuntimeError("HasAdjustableBias() is not available in this pyadq/ADQAPI build")
+
+
+def adq_apply_adjustable_bias(
+    handle: Dict,
+    channels: Iterable[int],
+    bias_mV: float,
+    settle_seconds: float = BIAS_SETTLE_SECONDS,
+    read_back: bool = True,
+) -> List[Dict]:
+    """Apply ADQAPI adjustable analog bias for selected channel(s)."""
+    dev = handle["dev"]
+    if not _has_adjustable_bias(dev):
+        raise RuntimeError(
+            "This ADQ14 variant/firmware does not support adjustable analog bias (DC offset)."
+        )
+
+    if not hasattr(dev, "SetAdjustableBias"):
+        raise RuntimeError("SetAdjustableBias() is not available in this pyadq/ADQAPI build")
+
+    get_bias = getattr(dev, "GetAdjustableBias", None)
+    results = []
+
+    for channel in channels:
+        actual_range_mVpp = handle.get("actual_input_ranges_mVpp", {}).get(channel)
+        if actual_range_mVpp is None:
+            actual_range_mVpp = adq_get_input_range_mVpp(handle, channel)
+            handle.setdefault("actual_input_ranges_mVpp", {})[channel] = actual_range_mVpp
+
+        bias_codes = compute_bias_codes(bias_mV, actual_range_mVpp)
+        status = dev.SetAdjustableBias(channel, bias_codes)
+        rb_codes = get_bias(channel) if (read_back and callable(get_bias)) else None
+        print(
+            "Apply adjustable bias: "
+            f"channel={channel}, bias_mV={bias_mV}, actual_range_mVpp={actual_range_mVpp}, "
+            f"bias_codes={bias_codes}, status={status}, readback={rb_codes}"
+        )
+        results.append(
+            {
+                "channel": channel,
+                "bias_mV": bias_mV,
+                "actual_range_mVpp": actual_range_mVpp,
+                "bias_codes": bias_codes,
+                "status": status,
+                "readback_codes": rb_codes,
+            }
+        )
+
+    if settle_seconds > 0:
+        time.sleep(settle_seconds)
+
+    return results
 
 
 def _calculate_derived_params(cfg: Dict) -> Dict:
