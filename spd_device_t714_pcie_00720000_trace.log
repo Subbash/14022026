@@ -1,0 +1,158 @@
+---------------------------------------------------------------------
+Log and error trace from ADQ of type   714
+---------------------------------------------------------------------
+
+[Log Header]
+Operating System       : Windows 10 Pro for Workstations AMD64
+Device type (integral) : 714
+API Revision           : 2023.1.1
+API DLL Path           : C:\Windows\SYSTEM32\ADQAPI.dll
+DLL calling executable : C:\Users\BSIITM\AppData\Local\Programs\Python\Python311\python.exe
+[End of Log Header]
+
+INFO : Enumerating and initializing non-SPD modules:
+INFO : Detected firmware AXI module ADQGEN7_HW_JESD204_0_TYPE at base address 0x51010000
+INFO : Detected firmware AXI module ADQGEN7_HW_IIC_0_TYPE at base address 0x40800000
+INFO : Detected firmware AXI module ADQGEN7_HW_INTC_0_TYPE at base address 0x41200000
+INFO : Detected firmware AXI module ADQGEN7_HW_SPI_0_TYPE at base address 0x44A00000
+INFO : Detected firmware AXI module ADQGEN7_HW_SPI_1_TYPE at base address 0x44A10000
+INFO : Detected firmware AXI module ADQGEN7_HW_SYSMON_0_TYPE at base address 0x51020000
+INFO : Detected firmware AXI module ADQGEN7_HW_TMRCTR_0_TYPE at base address 0x41C00000
+INFO : Detected firmware AXI module ADQGEN7_HW_DRPBRIDGE_JESD_TYPE at base address 0x52000000
+INFO : Detected firmware AXI module ADQGEN7_HW_DRPBRIDGE_PCIE_TYPE at base address 0x52010000
+INFO : Enumerating and initializing SPD modules:
+INFO : Initialized AXI module Acquisition        v2.0 at base address 0x500B0000.
+INFO : Initialized AXI module BarrelShifter      v0.3 at base address 0x50050000.
+INFO : Initialized AXI module DataTrig           v4.0 at base address 0x50010000.
+INFO : Initialized AXI module GeneralIO          v1.4 at base address 0x50090000.
+INFO : Initialized AXI module LevelTrig          v0.0 at base address 0x50030000.
+INFO : Initialized AXI module MemManager         v1.0 at base address 0x50080000.
+INFO : Initialized AXI module PacketGen          v1.2 at base address 0x50070000.
+INFO : Initialized AXI module PreTrig            v1.1 at base address 0x50040000.
+INFO : Initialized AXI module SampleSkip         v0.1 at base address 0x500C0000.
+INFO : Initialized AXI module TestPattern        v0.0 at base address 0x500A0000.
+INFO : Initialized AXI module UserLogic1         v1.2 at base address 0x50020000.
+INFO : Initialized AXI module UserLogic2         v0.0 at base address 0x60000000.
+INFO : Initialized AXI module GainAndOffset      v0.0 at base address 0x500E0000.
+INFO : Initialized AXI module DBS                v0.0 at base address 0x500F0000.
+INFO : Initialized AXI module Crypto             v0.0 at base address 0x50120000.
+INFO : Initialized AXI module MCUParameters      v1.1 at base address 0x0000AA3C.
+INFO : Setting up device:
+INFO : FPGA firmware information:
+INFO :   Revision:            77308
+INFO :   Channels:            4
+INFO :   Parallel samples:    2
+INFO :   Data width:          16 bits
+INFO :   Interleaving factor: 2^0
+INFO :   Virtual channels:    0
+INFO :   Processing channels: 4
+INFO : Attempting to enumerate and cache EEPROM.
+INFO :    Found EEPROM block: BASIC   , length 332
+INFO :    Found EEPROM block: ADQ14   , length 29
+INFO :    Found EEPROM block: LICENSE , length 50
+INFO :    Found EEPROM block: CALDATE , length 124
+INFO :    Found EEPROM block: ADQPRCAL, length 50
+INFO :    Found EEPROM block: ADJBIAS , length 68
+INFO :    Found EEPROM block: DCAFECAL, length 58
+INFO :    Found EEPROM block: LAST    , length 18
+INFO : Cached a total of 745 bytes from the EEPROM. Took 0.03 seconds
+INFO : Successfully parsed EEPROM BASIC block.
+INFO :   Product: ADQ14DC-4A-PCIe
+INFO :   Serial:  SPD-13249
+INFO :   PCB PN:  106-000-109-B
+INFO :   PCBA PN: 300-000-223-G
+INFO :   HWA PN:  320-225-013-G
+INFO :   HWSA PN: 
+INFO : Successfully parsed EEPROM ADQ14 block.
+INFO :   Channel 1: DC-coupled, 
+INFO :   Channel 2: DC-coupled, 
+INFO :   Channel 3: DC-coupled, 
+INFO :   Channel 4: DC-coupled, 
+INFO :   FPGA:    XC7K325T (I-grade, -2)
+INFO : FPGA DNA (64 bits):	0x00208d26 0x2b716854.
+INFO : Successfully parsed EEPROM LICENSE block.
+INFO : Crypto module status: 0x7.
+INFO : Wrote [127:0]:	0x00000000 0x00000000 0x00000000 0x00000080.
+INFO : Wrote [127:0]:	0x82d41979 0x9d3c7cc6 0x3f01af7f 0x6e63bdd1.
+INFO : Crypto module status: 0x7.
+INFO : License field validation successful.
+INFO :   Supported firmware:
+INFO :    - FWDAQ
+INFO : PLL detected: LMK04821
+INFO : Detected ADC at SPI address 02: AD9680, 1250 MSps
+INFO : Detected ADC at SPI address 03: AD9680, 1250 MSps
+INFO : Successfully parsed EEPROM ADQPRCAL block.
+INFO : Successfully parsed EEPROM ADJBIAS block.
+INFO : Successfully parsed EEPROM DCAFECAL block.
+INFO : External reference frequency set to 10.00 MHz
+INFO : Desired sample set to 500.00 MSps
+INFO : Attempting to change clock source to: 0
+INFO : Search for PLL2 dividers:
+ Target sampling frequency:  1000.000MHz
+ Reference frequency (PLL2): 10.000MHz
+ succeeded with PS=  2, N= 50 and R=  1.
+INFO : PLL2 signaled lock detect.
+INFO : FPGA JESD204B IP sysref captured and sync achieved.
+INFO : ADC 1 received SYSREF, setup and hold are OK.
+INFO : ADC 2 received SYSREF, setup and hold are OK.
+INFO : Pretrigger module supports 16384 samples maximum.
+INFO : (ADQGen7_DBSStd3::Reset:157) : DBS instance 0 identifying as 0 of 4 verified, core version 1616.
+INFO : (ADQGen7_DBSStd3::Reset:157) : DBS instance 1 identifying as 1 of 4 verified, core version 1616.
+INFO : (ADQGen7_DBSStd3::Reset:157) : DBS instance 2 identifying as 2 of 4 verified, core version 1616.
+INFO : (ADQGen7_DBSStd3::Reset:157) : DBS instance 3 identifying as 3 of 4 verified, core version 1616.
+INFO : No SP Devices standard daughterboard detected.
+INFO : DRAM Debug reg0: 0x00007f7e
+INFO : DRAM bank 1 reports calibration success.
+INFO : DRAM bank 2 reports calibration success.
+INFO : Pretrigger module supports 16384 samples maximum.
+INFO : === BOARD CURRENTS ===
+INFO : LTM4633 input current: 1.25A
+INFO : LTM4644 input current: 1.63A
+INFO : Negative DC/DC input current: 0.13A
+INFO : Total 12V current: 3.39A
+
+INFO : === BOARD SUPPLY VOLTAGES ===
+INFO : Board supply:
+INFO :      +12V:  12.00    OK
+INFO : DC/DC positive supply voltages:
+INFO :      +1V0:  0.98    OK
+INFO :      +1V5:  1.48    OK
+INFO :      +1V8:  1.75    OK
+INFO :      +3V3:  3.31    OK
+INFO :      +4V0:  3.95    OK
+INFO :      +5V3:  5.27    OK
+INFO : DC/DC negative supply voltages:
+INFO :      -2V1: -2.15    OK
+INFO :      -5V2: -5.15    OK
+INFO : ADC/PLL supply voltages:
+INFO :   +1V25A1:  1.24    OK
+INFO :   +1V25A2:  1.23    OK
+INFO :    +1V25D:  1.24    OK
+INFO :     +2V5A:  2.51    OK
+INFO :     +3V3A:  3.29    OK
+INFO : Frontend supply voltages:
+INFO :      -4VA: -3.94    OK
+INFO :   +3V3CLK:  3.31    OK
+INFO :     -0V6A: -0.61    OK
+INFO :     +4V6A:  4.59    OK
+INFO :     +4V1A:  4.05    OK
+INFO :      +8VA:  7.90    OK
+INFO : FPGA supply voltages:
+INFO :     +1V05:  1.03    OK
+INFO :      +1V2:  1.20    OK
+INFO :      +2V5:  2.54    OK
+INFO : === BOARD TEMPERATURES ===
+INFO :        FPGA temp:  61.0 degC   OK (Overheat limit at:  100.0)
+INFO :     LTM4644 temp:  77.7 degC   OK (Overheat limit at:  110.0)
+INFO :   LTM4633 temp A:  65.8 degC   OK (Overheat limit at:  110.0)
+INFO :   LTM4633 temp B:  68.7 degC   OK (Overheat limit at:  110.0)
+INFO :        ADC1 temp:  79.9 degC   OK (Overheat limit at:  110.0)
+INFO :        ADC2 temp:  85.5 degC   OK (Overheat limit at:  110.0)
+INFO : PCB temp: 64.00
+INFO : Device setup successful.
+Communication interface: PCIe (Link negotiated as x08g02)
+Physical interface     : PCIe or PXIe
+INFO : Configured device as closed.
+--------------------------
+End of Log Session for ADQ
+--------------------------

@@ -1,0 +1,19 @@
+---------------------------------------------------------------------
+Log and error trace for ADQControlUnit
+API Revision : 2023.1.1
+---------------------------------------------------------------------
+INFO : (ADQControlUnit::ListDevices:308) : ListDevices found 0 QPCIE devices.
+INFO : (ADQControlUnit::ListDevices:454) : ListDevices found 0 USB devices.
+INFO : (ADQControlUnit::ListDevices:537) : ListDevices found 1 PCIe devices.
+INFO : (ADQControlUnit::GetDeviceStatus:2285) : Device at location Bus:114 Slot:0 Function:0 is currently ENABLED.
+INFO : (ADQControlUnit::GetDeviceStatus:2304) : Status for device (Bus:114 Slot:0 Function:0) was retrieved with errorcode: 2. Possible cause: General user access right limitation. Not critical for device operations.
+INFO : (ADQControlUnit::ListDevices:580) : Created info entry for PCIe ADQ with pID 0020.
+INFO : (ADQControlUnit::ListDevices:692) : ListDevices found 12 USB devices.
+INFO : (ADQControlUnit::ListDevices:804) : ListDevices found 1 PCIeLite devices.
+INFO : (ADQControlUnit::OpenDeviceInterface:924) : OpenDeviceInterface: Opening interface to device from info list entry 0.
+INFO : (ADQControlUnit::OpenDeviceInterface:1472) : OpenDeviceInterface: Device interface successfully opened.
+INFO : (ADQControlUnit::SetupDevice:1539) : SetupDevice: Setting up device from info list entry 0.
+INFO : (ADQControlUnit::SetupDevice:1545) : SetupDevice: Found opened ADQ object that matches info entry.
+-------------------------------------
+End of Log Session for ADQControlUnit
+-------------------------------------
