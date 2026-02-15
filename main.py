@@ -9,7 +9,15 @@ from matplotlib import gridspec
 from datetime import datetime
 
 from rf_controller import connect_rf_controller, set_rf, set_rf_freq_only, enable_rf, get_status
-from adq_controller import adq_connect, adq_set_trigger_output, adq_create_buffers, adq_acquire_ch0
+from adq_controller import (
+    adq_connect,
+    adq_set_trigger_output,
+    adq_create_buffers,
+    adq_acquire_ch0,
+    adq_set_input_range_mVpp,
+    adq_apply_adjustable_bias,
+    bias_conversion_demo,
+)
 from processing import (
     measure_pump_pulse,
     process_trace,
@@ -49,6 +57,40 @@ rf_params = dict(
     sweep_power_dbm=-8.0,
     com_port="COM19"
 )
+
+
+BIAS_UI_CONFIG = {
+    # User-facing control (per channel) analogous to GUI fields.
+    "quick_buttons_mV": [0.0, -50.0, -100.0, -150.0],
+    "per_channel_bias_mV": {
+        0: 0.0,
+        1: 0.0,
+    },
+    # Optional: set to e.g. [0] to apply on one channel only.
+    "selected_channels": [0, 1],
+    "apply_bias": False,
+}
+
+
+def set_bias_quick_preset(channel: int, bias_mV: float):
+    """Helper for GUI quick-button semantics (0, -50, -100, -150 mV)."""
+    if bias_mV not in BIAS_UI_CONFIG["quick_buttons_mV"]:
+        raise ValueError(f"Unsupported quick bias preset: {bias_mV} mV")
+    BIAS_UI_CONFIG["per_channel_bias_mV"][channel] = float(bias_mV)
+
+
+def apply_bias_from_ui(handle):
+    """Apply bias values for selected channels as if user clicked 'Apply Bias'."""
+    if not BIAS_UI_CONFIG.get("apply_bias", False):
+        return []
+
+    selected_channels = BIAS_UI_CONFIG.get("selected_channels", [0])
+    per_channel_bias = BIAS_UI_CONFIG.get("per_channel_bias_mV", {})
+    all_results = []
+    for channel in selected_channels:
+        bias_mV = float(per_channel_bias.get(channel, 0.0))
+        all_results.extend(adq_apply_adjustable_bias(handle, [channel], bias_mV))
+    return all_results
 
 
 # ==========================================================
@@ -97,6 +139,8 @@ def compute_adq_config(fiber_len_actual_m, averages=4096, max_chunk=512, sample_
         averages=averages,              # total desired averages
         chunk_averages=chunk_averages,  # periods per hardware acquisition
         n_chunks=n_chunks,              # number of acquisitions to reach total
+        # Keep range logic unchanged by default: None means keep current device range.
+        requested_input_range_mVpp=None,
     )
     
     return adq_config
@@ -152,8 +196,17 @@ def sweep_and_process(
 
     # --- ADQ Setup ---
     handle = adq_connect(adq_config or {})
-    adq_set_trigger_output(handle, level_v=5)
+
+    # Optional: if configured, set input range first and store actual calibrated range.
     cfg = handle["config"]
+    requested_range_mVpp = cfg.get("requested_input_range_mVpp")
+    if requested_range_mVpp is not None:
+        for channel in range(cfg["number_of_channels"]):
+            adq_set_input_range_mVpp(handle, channel, requested_range_mVpp)
+
+    apply_bias_from_ui(handle)
+
+    adq_set_trigger_output(handle, level_v=5)
 
     # --- Allocate hardware buffers ONCE ---
     bufs = adq_create_buffers(handle)
@@ -237,6 +290,7 @@ def sweep_and_process(
 #  MAIN
 # ==========================================================
 if __name__ == "__main__":
+    print(bias_conversion_demo())
     # --- 1. Setup Session Directory ---
     timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S")
     session_dir = os.path.join(SAVE_CONFIG['processed_save_dir'], f"run_{timestamp_str}")
